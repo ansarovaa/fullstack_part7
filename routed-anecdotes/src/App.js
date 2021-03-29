@@ -1,5 +1,12 @@
 import React, {useState} from 'react'
-import {BrowserRouter as Router, Switch, Route, Link, useParams} from "react-router-dom"
+import {
+    BrowserRouter as Router,
+    Switch,
+    Route,
+    Link,
+    useParams,
+    useHistory
+} from "react-router-dom"
 
 const Menu = () => {
     const padding = {
@@ -22,7 +29,8 @@ const Anecdote = ({anecdotes}) => {
         <div>
             <h2>{anecdote.content}</h2>
             <div>
-                <strong> Votes: {anecdote.votes}</strong>
+                <strong>
+                    Votes: {anecdote.votes}</strong>
             </div>
             <div>
                 <strong>Author: {anecdote.author}</strong>
@@ -116,7 +124,17 @@ const CreateNew = (props) => {
 
 }
 
+const Notification = ({notification}) => {
+    return (
+        <div>
+            <p>{notification}</p>
+        </div>
+    )
+}
+
 const App = () => {
+  const history = useHistory()
+  console.log(history)
     const [anecdotes,
         setAnecdotes] = useState([
         {
@@ -137,9 +155,17 @@ const App = () => {
     const [notification,
         setNotification] = useState('')
 
+    const setMsg = (msg) => {
+        setNotification(msg)
+        setTimeout(() => {
+            setNotification('')
+        }, 10000)
+    }
+
     const addNew = (anecdote) => {
         anecdote.id = (Math.random() * 10000).toFixed(0)
         setAnecdotes(anecdotes.concat(anecdote))
+        setMsg(`A new anecdote '${anecdote.content}' created!`)
     }
 
     const anecdoteById = (id) => anecdotes.find(a => a.id === id)
@@ -162,6 +188,7 @@ const App = () => {
 
             <Router>
                 <Menu/>
+                <Notification notification={notification}/>
                 <Switch>
                     <Route path="/createnew">
                         <CreateNew addNew={addNew}/>
@@ -170,7 +197,7 @@ const App = () => {
                         <About/>
                     </Route>
                     <Route path="/anecdotes/:id">
-                        <Anecdote anecdotes = {anecdotes}/>
+                        <Anecdote anecdotes={anecdotes}/>
                     </Route>
                     <Route path="/">
                         <AnecdoteList anecdotes={anecdotes}/>
