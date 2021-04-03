@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
 import Error from './components/Error'
@@ -6,6 +7,7 @@ import AddBlog from './components/AddBlog'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import { showNotification } from './reducers/notificationReducer'
 
 const App = () => {
   const [blogs,
@@ -26,21 +28,9 @@ const App = () => {
     setUser] = useState(null)
   const [errorMessage,
     setErrorMessage] = useState(null)
-  const [message,
-    setMessage] = useState(null)
   const [addBlogVisible] = useState(false)
   // eslint-disable-next-line no-unused-vars
-  const hideWhenVisible = {
-    display: addBlogVisible
-      ? 'none'
-      : ''
-  }
   // eslint-disable-next-line no-unused-vars
-  const showWhenVisible = {
-    display: addBlogVisible
-      ? ''
-      : 'none'
-  }
   useEffect(() => {
     blogService
       .getAll()
@@ -58,48 +48,9 @@ const App = () => {
     }
   }, [])
 
-  const addBlog = (event) => {
-    event.preventDefault()
-    const blogObject = {
-      title: newTitle,
-      author: newAuthor,
-      url: newUrl,
-      likes: newLikes
-    }
 
-    blogService
-      .create(blogObject)
-      .then(returnedBlog => {
-        setBlogs(blogs.concat(returnedBlog))
-        setNewTitle('')
-        setNewAuthor('')
-        setNewUrl('')
-        setNewLikes('')
-        setMessage(`Added blog ${returnedBlog.title} by ${returnedBlog.author}`)
-        setTimeout(() => {
-          setMessage(null)
-        }, 5000)
-      })
-  }
 
-  const handleTitleChange = (event) => {
-    console.log(event.target.value)
-    setNewTitle(event.target.value)
-  }
 
-  const handleAuthorChange = (event) => {
-    console.log(event.target.value)
-    setNewAuthor(event.target.value)
-  }
-
-  const handleUrlChange = (event) => {
-    console.log(event.target.value)
-    setNewUrl(event.target.value)
-  }
-  const handleLikesChange = (event) => {
-    console.log(event.target.value)
-    setNewLikes(event.target.value)
-  }
   const handleLogin = async(event) => {
     event.preventDefault()
     try {
@@ -143,7 +94,7 @@ const App = () => {
   )
 
   // eslint-disable-next-line no-unused-vars
-  const logOut = (event) => {
+  const logOut = () => {
     window
       .localStorage
       .removeItem('loggedNoteappUser')
@@ -154,28 +105,19 @@ const App = () => {
   const handleBlogLikeClick = async(id) => {
     const blogToUpdate = blogs.find((item) => item.id === id)
     if (blogToUpdate) {
-      try {
-        const likes = blogToUpdate.likes
-          ? blogToUpdate.likes + 1
-          : 1
-        const updatedBlog = {
-          ...blogToUpdate,
-          likes
-        }
-        const response = await blogService.updateBlog(id, updatedBlog)
-        if (response) {
-          const updatedBlogList = blogs.map((item) => item.id === id
-            ? updatedBlog
-            : item)
-          setBlogs(updatedBlogList)
-        }
-      } catch (error) {
-        const { data, statusText } = error.response
-        setMessage({
-          message: data.error || statusText,
-          type: 'unsuccessful'
-        })
-        console.warn(error)
+      const likes = blogToUpdate.likes
+        ? blogToUpdate.likes + 1
+        : 1
+      const updatedBlog = {
+        ...blogToUpdate,
+        likes
+      }
+      const response = await blogService.updateBlog(id, updatedBlog)
+      if (response) {
+        const updatedBlogList = blogs.map((item) => item.id === id
+          ? updatedBlog
+          : item)
+        setBlogs(updatedBlogList)
       }
     }
   }
@@ -200,7 +142,7 @@ const App = () => {
 
   return (
     <div>
-      <Notification message={message}/>
+      <Notification/>
       <Error message={errorMessage}/> {user === null
 
         ? loginForm()
@@ -218,16 +160,7 @@ const App = () => {
             onRemoveClick={handleBlogRemoveClick}
             authUser={user}/>)}
           <Togglable buttonLabel="Show Add blog form">
-            <AddBlog
-              addBlog={addBlog}
-              newTitle={newTitle}
-              mewAuthor={newAuthor}
-              newUrl={newUrl}
-              newLikes={newLikes}
-              handleAuthorChange={handleAuthorChange}
-              handleLikesChange={handleLikesChange}
-              handleTitleChange={handleTitleChange}
-              handleUrlChange={handleUrlChange}/>
+            <AddBlog/>
           </Togglable>
         </div>
       }

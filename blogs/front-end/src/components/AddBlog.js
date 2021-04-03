@@ -1,17 +1,45 @@
 import React from 'react'
-const AddBlog = ({ addBlog, newTitle, newAuthor, newUrl, newLikes, handleAuthorChange, handleLikesChange, handleTitleChange, handleUrlChange }) => {
+// eslint-disable-next-line no-unused-vars
+import { connect } from 'react-redux'
+// eslint-disable-next-line no-unused-vars
+import { creationBlog } from '../reducers/creationBlog'
+// eslint-disable-next-line no-unused-vars
+import { showNotification } from '../reducers/notificationReducer'
+
+const AddBlog = (props) => {
+  const createBlog = async(event) => {
+    event.preventDefault()
+    let blog = {
+      title: event.target.title.value,
+      author: event.target.author.value,
+      url: event.target.url.value,
+      likes: 0
+    }
+    event.target.title.value = ''
+    event.target.author.value = ''
+    event.target.url.value = ''
+    console.log(blog)
+    props.creationBlog(blog)
+    // props.creationBlog(blog)
+    props.showNotification(`Added blog by ${blog.author}`, 5)
+  }
   return (
-    <div className="formDiv">
-      <form onSubmit={addBlog}>
-        <div>title<input id = "title" value={newTitle} onChange={handleTitleChange}/></div>
-        <div>author<input id = "author" value={newAuthor} onChange={handleAuthorChange}/></div>
-        <div>url<input id = "url" value={newUrl} onChange={handleUrlChange}/></div>
-        <div>likes<input id = "like" value={newLikes} onChange={handleLikesChange}/></div>
-        <button type="submit">save</button>
+    <div>
+      <h2>Add new</h2>
+      <form onSubmit={createBlog}>
+        <div><input name="title"/></div>
+        <div><input name="author"/></div>
+        <div><input name="url"/></div>
+        <button type="submit">create</button>
       </form>
     </div>
   )
 
 }
 
-export default AddBlog
+const mapDispatchToProps = {
+  creationBlog,
+  showNotification
+}
+
+export default connect(null, mapDispatchToProps)(AddBlog)
