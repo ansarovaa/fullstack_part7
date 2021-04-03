@@ -7,17 +7,12 @@ import AddBlog from './components/AddBlog'
 import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import store from './store'
 import { showNotification } from './reducers/notificationReducer'
+import { initializeBlogs } from './reducers/creationBlog'
+import { useDispatch } from 'react-redux'
 
 const App = () => {
-  const [blogs,
-    setBlogs] = useState([])
-  const [newTitle,
-    setNewTitle] = useState('')
-  const [newAuthor,
-    setNewAuthor] = useState('')
-  const [newUrl,
-    setNewUrl] = useState('')
   const [newLikes,
     setNewLikes] = useState('')
   const [username,
@@ -29,13 +24,11 @@ const App = () => {
   const [errorMessage,
     setErrorMessage] = useState(null)
   const [addBlogVisible] = useState(false)
-  // eslint-disable-next-line no-unused-vars
-  // eslint-disable-next-line no-unused-vars
+
+  const dispatch = useDispatch()
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(blogs => setBlogs(blogs))
-  }, [])
+    dispatch(initializeBlogs())
+  },[dispatch])
 
   useEffect(() => {
     const loggedUserJSON = window
@@ -47,9 +40,6 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
-
-
-
 
   const handleLogin = async(event) => {
     event.preventDefault()
@@ -102,7 +92,7 @@ const App = () => {
 
   }
 
-  const handleBlogLikeClick = async(id) => {
+  /*const handleBlogLikeClick = async(id) => {
     const blogToUpdate = blogs.find((item) => item.id === id)
     if (blogToUpdate) {
       const likes = blogToUpdate.likes
@@ -120,9 +110,9 @@ const App = () => {
         setBlogs(updatedBlogList)
       }
     }
-  }
+  }*/
 
-  const handleBlogRemoveClick = async(id, title, author) => {
+  /*const handleBlogRemoveClick = async(id, title, author) => {
     const message = `Remove blog ${title} by ${author}`
     if (window.confirm(message)) {
       try {
@@ -138,7 +128,7 @@ const App = () => {
         console.warn(error)
       }
     }
-  }
+  }*/
 
   return (
     <div>
@@ -152,13 +142,7 @@ const App = () => {
             <button id = "logout" onClick={logOut}>logout</button>
           </p>
 
-          <h2>blogs</h2>
-          {blogs.sort((first, second) => second.likes - first.likes).map(blog => <Blog
-            key={blog.id}
-            blog={blog}
-            onLikeClick={handleBlogLikeClick}
-            onRemoveClick={handleBlogRemoveClick}
-            authUser={user}/>)}
+          <Blog/>
           <Togglable buttonLabel="Show Add blog form">
             <AddBlog/>
           </Togglable>

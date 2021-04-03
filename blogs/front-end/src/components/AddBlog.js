@@ -18,7 +18,6 @@ const AddBlog = (props) => {
     event.target.title.value = ''
     event.target.author.value = ''
     event.target.url.value = ''
-    console.log(blog)
     props.creationBlog(blog)
     // props.creationBlog(blog)
     props.showNotification(`Added blog by ${blog.author}`, 5)
@@ -27,9 +26,9 @@ const AddBlog = (props) => {
     <div>
       <h2>Add new</h2>
       <form onSubmit={createBlog}>
-        <div><input name="title"/></div>
-        <div><input name="author"/></div>
-        <div><input name="url"/></div>
+        <div>Title<input name="title"/></div>
+        <div>Author<input name="author"/></div>
+        <div>URL<input name="url"/></div>
         <button type="submit">create</button>
       </form>
     </div>

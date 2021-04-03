@@ -2,8 +2,10 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
+import { useSelector, useDispatch } from 'react-redux'
+import { showNotification, removeNotification } from '../reducers/notificationReducer'
 
-const Blog = ({ blog, onLikeClick, authUser, onRemoveClick, user }) => {
+const Blog = () => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -18,30 +20,37 @@ const Blog = ({ blog, onLikeClick, authUser, onRemoveClick, user }) => {
     setVisible(!isVisible)
   }
 
+  const blogs = useSelector((state) => {
+    console.log('sukiny deti')
+    console.log(state)
+    // const filteredBlogs = state.creationBlog.filter((a) =>
+    //   a.title.toLowerCase().includes(state.filter.toLowerCase())
+    // )
+    return state.creationBlog.sort((a, b) => b.likes - a.likes)
+  })
+
+  const dispatch = useDispatch()
+
   return (
 
-    <div style ={blogStyle} className='blog'>
+    <div  className='blog'>
+      <h1>Blogs</h1>
       <div className = 'blogList'>
-        <span className = 'blog-title'>{blog.title}</span>
-        <span className = 'blog-author'>{blog.author}</span>
-        {isVisible && ( <> <span>{blog.url}</span> <span> Likes {blog.likes} < button onClick = {onLikeClick.bind(null, blog.id)}
-          className = 'btn ml-8'>Like</button> by {blog.user.username}</span></>)}</div>
-      <div className = 'buttons'> <button onClick={handleToggle} className='btn ml-8' id = 'hideViewButton'>
-        {isVisible
-          ? 'Hide'
-          : 'View'}
-      </button>
-
-      {authUser.username === blog.user.username && (
-        <button onClick={onRemoveClick.bind(
-          null,
-          blog.id,
-          blog.title,
-          blog.author
-        )} className='btn mt-12 blog-item-remove-btn'>Remove</button>)}</div>
-   
-
-     
+        {blogs.map(blog => <div style ={blogStyle} key = {blog.id}> 
+          <span className = 'blog-title'>{blog.title}</span>
+          <span className = 'blog-author'>{blog.author}</span>
+          {isVisible && ( <> <span>{blog.url}</span> <span> Likes {blog.likes} 
+            <button className = 'btn ml-8'>Like</button> by {blog.user.username}
+          </span></>)}
+          <div className = 'buttons'> <button onClick={handleToggle} className='btn ml-8' id = 'hideViewButton'>
+            {isVisible
+              ? 'Hide'
+              : 'View'}
+          </button>
+          </div>
+        </div>)}
+        
+      </div>
     </div>
 
   )

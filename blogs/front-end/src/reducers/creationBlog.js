@@ -26,7 +26,6 @@ export const initializeBlogs = () => {
 
 export const creationBlog = blog => {
   return async dispatch => {
-    console.log('suka serik')
     const newBlog = await blogService.create(blog)
     dispatch({ type: 'NEW_BLOG', data: newBlog })
   }
