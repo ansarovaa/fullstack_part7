@@ -12,6 +12,13 @@ const reducer = (state = [], action) => {
       ...state,
       action.data
     ]
+  case 'LIKE':
+    // eslint-disable-next-line no-case-declarations
+    const blog = state.find(a => a.id === action.data.id)
+    blog.likes = blog.likes + 1
+    return state.map(a => a.id === blog.id
+      ? blog
+      : a)
   default:
     return state
   }
@@ -28,6 +35,16 @@ export const creationBlog = blog => {
   return async dispatch => {
     const newBlog = await blogService.create(blog)
     dispatch({ type: 'NEW_BLOG', data: newBlog })
+  }
+}
+
+export const likeBlog = (blog) => {
+  return async dispatch => {
+    const updatedBlog = await blogService.updateBlog(blog.id, {
+      ...blog,
+      likes: blog.likes + 1
+    })
+    dispatch({ type: 'LIKE', data: updatedBlog })
   }
 }
 

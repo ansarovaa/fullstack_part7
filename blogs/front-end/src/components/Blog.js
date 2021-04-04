@@ -3,6 +3,11 @@
 import React, { useState } from 'react'
 import PropTypes from 'prop-types'
 import { useSelector, useDispatch } from 'react-redux'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link, useParams
+} from 'react-router-dom'
+import SingleBlog from './SingleBlog'
 import { showNotification, removeNotification } from '../reducers/notificationReducer'
 
 const Blog = () => {
@@ -32,27 +37,15 @@ const Blog = () => {
   const dispatch = useDispatch()
 
   return (
-
     <div  className='blog'>
       <h1>Blogs</h1>
       <div className = 'blogList'>
         {blogs.map(blog => <div style ={blogStyle} key = {blog.id}> 
-          <span className = 'blog-title'>{blog.title}</span>
-          <span className = 'blog-author'>{blog.author}</span>
-          {isVisible && ( <> <span>{blog.url}</span> <span> Likes {blog.likes} 
-            <button className = 'btn ml-8'>Like</button> by {blog.user.username}
-          </span></>)}
-          <div className = 'buttons'> <button onClick={handleToggle} className='btn ml-8' id = 'hideViewButton'>
-            {isVisible
-              ? 'Hide'
-              : 'View'}
-          </button>
-          </div>
+          <Link to={`/blogs/${blog.id}`}>{blog.title}</Link>
         </div>)}
         
       </div>
     </div>
-
   )
 }
 

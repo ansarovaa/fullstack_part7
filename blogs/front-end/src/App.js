@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from 'react'
 import Blog from './components/Blog'
+import SingleBlog from './components/SingleBlog'
 import Error from './components/Error'
 import Notification from './components/Notification'
 import AddBlog from './components/AddBlog'
@@ -11,6 +12,22 @@ import store from './store'
 import { showNotification } from './reducers/notificationReducer'
 import { initializeBlogs } from './reducers/creationBlog'
 import { useDispatch } from 'react-redux'
+import {
+  BrowserRouter as Router,
+  Switch, Route, Link
+} from 'react-router-dom'
+
+const Menu = () => {
+  const padding = {
+    paddingRight: 5
+  }
+  return (
+    <div>
+      <Link style={padding} to="/blogs">All blogs</Link>
+      <Link style={padding} to="/create">Create new blog</Link>
+    </div>
+  )
+}
 
 const App = () => {
   const [newLikes,
@@ -132,24 +149,47 @@ const App = () => {
 
   return (
     <div>
-      <Notification/>
-      <Error message={errorMessage}/> {user === null
-
-        ? loginForm()
-        : <div>
-          <p>{user.name}
-                        logged-in
-            <button id = "logout" onClick={logOut}>logout</button>
-          </p>
-
-          <Blog/>
-          <Togglable buttonLabel="Show Add blog form">
-            <AddBlog/>
-          </Togglable>
+      <Router>
+        <div>
+          <Menu/>
+          <Notification/>
+          <Error message={errorMessage}/>
         </div>
-      }
 
+        <Switch>
+          {user === null
+
+            ? loginForm()
+            : <>
+              <p>{user.name}
+                logged-in
+                <button id = "logout" onClick={logOut}>logout</button>
+              </p>
+              <Route path="/blogs">
+                <Blog/>
+              </Route>
+
+
+              <Route path="/blogs/:id">
+                <SingleBlog/>
+              </Route>
+              <Route path="/create">
+                <Togglable buttonLabel="Show Add blog form">
+                  <AddBlog/>
+                </Togglable>
+              </Route>
+
+            </>
+          }
+
+        </Switch>
+      </Router>
     </div>
+
+
+
+
+
   )
 }
 
